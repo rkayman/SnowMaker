@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IntegrationTests.cs")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription( "Integration Testing SnowMaker Id Generator" )]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("IntegrationTests.cs")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCompany( "Tatham Oddie and Jamal Abreu" )]
+[assembly: AssemblyProduct( "SnowMaker" )]
+[assembly: AssemblyCopyright( "Copyright © 2014 Tatham Oddie" )]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

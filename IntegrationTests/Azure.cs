@@ -23,7 +23,7 @@ namespace IntegrationTests.cs
             return new BlobOptimisticDataStore(storageAccount, scope.ContainerName);
         }
 
-        public class TestScope : ITestScope
+        public sealed class TestScope : ITestScope
         {
             readonly CloudBlobClient blobClient;
 

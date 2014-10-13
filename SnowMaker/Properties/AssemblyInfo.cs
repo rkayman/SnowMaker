@@ -14,8 +14,8 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("1e20fb86-8ec2-4796-baa4-664ec1b525c2")]
 
-[assembly: AssemblyVersion( "1.0.2.0" )]
-[assembly: AssemblyFileVersion( "1.0.2.0" )]
+[assembly: AssemblyVersion("1.1.0.46")]
+[assembly: AssemblyFileVersion("1.1.0.46")]
 
 [assembly: InternalsVisibleTo("SnowMaker.UnitTests")]
 [assembly: AssemblyCopyrightAttribute( "Copyright © 2014 Tatham Oddie" )]

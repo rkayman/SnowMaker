@@ -22,7 +22,7 @@ namespace SnowMaker
             }
             catch (FileNotFoundException)
             {
-                using (var file = File.Create(blockPath))
+	            var file = File.Create(blockPath);
                 using (var streamWriter = new StreamWriter(file))
                 {
                     streamWriter.Write(SeedValue);

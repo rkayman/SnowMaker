@@ -7,7 +7,7 @@
     <owners>$author$</owners>
     <licenseUrl>http://www.opensource.org/licenses/MS-PL</licenseUrl>
     <projectUrl>http://l.tath.am/snowmaker</projectUrl>
-    <description>High performance, distributed unique id generator for Azure environments.</description>
+    <description>High performance, distributed unique id generator.</description>
     <tags>Azure</tags>
   </metadata>
 </package>

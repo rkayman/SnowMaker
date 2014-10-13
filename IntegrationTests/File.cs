@@ -18,7 +18,7 @@ namespace IntegrationTests.cs
             return new DebugOnlyFileDataStore(scope.DirectoryPath);
         }
 
-        public class TestScope : ITestScope
+        public sealed class TestScope : ITestScope
         {
             public TestScope()
             {

@@ -83,7 +83,7 @@ namespace SnowMaker
             return blobReference;
         }
 
-        void UploadText(ICloudBlob blob, string text, AccessCondition accessCondition)
+	    static void UploadText(ICloudBlob blob, string text, AccessCondition accessCondition)
         {
             blob.Properties.ContentEncoding = "UTF-8";
             blob.Properties.ContentType = "text/plain";

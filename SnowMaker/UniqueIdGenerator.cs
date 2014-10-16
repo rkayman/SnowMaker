@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SnowMaker
 {
     public class UniqueIdGenerator : IUniqueIdGenerator
     {
-        readonly IOptimisticDataStore optimisticDataStore;
-
+	    readonly IOptimisticDataStore optimisticDataStore;
+	    readonly IOptimisticDataStoreAsync optimisticDataStoreAsync;
+		
         readonly IDictionary<string, ScopeState> states = new Dictionary<string, ScopeState>();
         readonly object statesLock = new object();
 
@@ -19,6 +21,11 @@ namespace SnowMaker
         {
             this.optimisticDataStore = optimisticDataStore;
         }
+
+		public UniqueIdGenerator(IOptimisticDataStoreAsync optimisticDataStoreAsync)
+		{
+			this.optimisticDataStoreAsync = optimisticDataStoreAsync;
+		}
 
         public int BatchSize
         {
@@ -59,13 +66,13 @@ namespace SnowMaker
                 () => new ScopeState());
         }
 
-        void UpdateFromSyncStore(string scopeName, ScopeState state)
+	    async void UpdateFromSyncStore(string scopeName, ScopeState state)
         {
             var writesAttempted = 0;
 
             while (writesAttempted < maxWriteAttempts)
             {
-                var data = optimisticDataStore.GetData(scopeName);
+                var data = await GetData(scopeName);
 
                 long nextId;
                 if (!long.TryParse(data, out nextId))
@@ -78,7 +85,7 @@ namespace SnowMaker
                 state.HighestIdAvailableInBatch = nextId - 1 + batchSize;
                 var firstIdInNextBatch = state.HighestIdAvailableInBatch + 1;
 
-                if (optimisticDataStore.TryOptimisticWrite(scopeName, firstIdInNextBatch.ToString(CultureInfo.InvariantCulture)))
+                if (await TryOptimisticWrite(scopeName, firstIdInNextBatch.ToString(CultureInfo.InvariantCulture)))
                     return;
 
                 writesAttempted++;
@@ -88,5 +95,21 @@ namespace SnowMaker
                 "Failed to update the data store after {0} attempts. This likely represents too much contention against the store. Increase the batch size to a value more appropriate to your generation load.",
                 writesAttempted));
         }
+
+	    async Task<string> GetData(string scopeName)
+	    {
+		    if (null != optimisticDataStore)
+			    return optimisticDataStore.GetData(scopeName);
+
+		    return await optimisticDataStoreAsync.GetDataAsync(scopeName);
+	    }
+
+	    async Task<bool> TryOptimisticWrite(string scopeName, string data)
+	    {
+		    if (null != optimisticDataStore)
+			    return optimisticDataStore.TryOptimisticWrite(scopeName, data);
+
+		    return await optimisticDataStoreAsync.TryOptimisticWriteAsync(scopeName, data);
+	    }
     }
 }

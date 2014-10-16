@@ -9,9 +9,9 @@ using SnowMaker;
 namespace IntegrationTests.cs
 {
 	[TestFixture]
-	public class Raven : Scenarios<Raven.TestScope>
+	public class Raven : ScenariosAsync<Raven.TestScope>
 	{
-		protected override IOptimisticDataStore BuildStore(TestScope scope)
+		protected override IOptimisticDataStoreAsync BuildStore(TestScope scope)
 		{
 			return new RavenOptimisticDataStore(scope.Store);
 		}

@@ -16,7 +16,7 @@ namespace SnowMaker
 		public Etag Etag { get; set; }
 	}
 
-	public class RavenOptimisticDataStore : IOptimisticDataStore
+	public class RavenOptimisticDataStore : IOptimisticDataStoreAsync
 	{
 		private const string SeedValue = "1";
 
@@ -27,20 +27,20 @@ namespace SnowMaker
 			Store = store;
 		}
 
-		public string GetData(string id)
+		public async Task<string> GetDataAsync(string id)
 		{
-			var doc = ReadDocument(id);
+			var doc = await ReadDocumentAsync(id);
 			return doc.Value;
 		}
 
-		public bool TryOptimisticWrite(string id, string data)
+		public async Task<bool> TryOptimisticWriteAsync(string id, string data)
 		{
-			var doc = ReadDocument(id);
+			var doc = await ReadDocumentAsync(id);
 			doc.Value = data;
 
 			try
 			{
-				UpdateDocument(doc);
+				await UpdateDocumentAsync(doc);
 			}
 			catch (ConcurrencyException)
 			{
@@ -48,22 +48,6 @@ namespace SnowMaker
 			}
 
 			return true;
-		}
-
-		private SnowMakerDocument CreateDocument(string id)
-		{
-			using (var session = Store.OpenSession())
-			{
-				session.Advanced.UseOptimisticConcurrency = true;
-
-				var doc = new SnowMakerDocument { Id = id, Value = SeedValue };
-				session.Store(doc, id);
-				session.SaveChanges();
-
-				doc.Etag = session.Advanced.GetEtagFor(doc);
-
-				return doc;
-			}
 		}
 
 		private async Task<SnowMakerDocument> CreateDocumentAsync(string id)
@@ -82,19 +66,6 @@ namespace SnowMaker
 			}
 		}
 
-		private SnowMakerDocument ReadDocument(string id)
-		{
-			using (var session = Store.OpenSession())
-			{
-				var doc = session.Load<SnowMakerDocument>(id);
-
-				if (null != doc)
-					doc.Etag = session.Advanced.GetEtagFor(doc);
-
-				return doc ?? CreateDocument(id);
-			}
-		}
-
 		private async Task<SnowMakerDocument> ReadDocumentAsync(string id)
 		{
 			using (var session = Store.OpenAsyncSession())
@@ -105,19 +76,6 @@ namespace SnowMaker
 					doc.Etag = session.Advanced.GetEtagFor(doc);
 
 				return doc ?? await CreateDocumentAsync(id);
-			}
-		}
-
-		private void UpdateDocument(SnowMakerDocument doc)
-		{
-			using (var session = Store.OpenSession())
-			{
-				session.Advanced.UseOptimisticConcurrency = true;
-
-				session.Store(doc, doc.Etag, doc.Id);
-				session.SaveChanges();
-
-				doc.Etag = session.Advanced.GetEtagFor(doc);
 			}
 		}
 

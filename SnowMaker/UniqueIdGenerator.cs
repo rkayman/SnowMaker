@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SnowMaker
 {
     public class UniqueIdGenerator : IUniqueIdGenerator
     {
 	    readonly IOptimisticDataStore optimisticDataStore;
-	    readonly IOptimisticDataStoreAsync optimisticDataStoreAsync;
 		
         readonly IDictionary<string, ScopeState> states = new Dictionary<string, ScopeState>();
         readonly object statesLock = new object();
@@ -21,11 +19,6 @@ namespace SnowMaker
         {
             this.optimisticDataStore = optimisticDataStore;
         }
-
-		public UniqueIdGenerator(IOptimisticDataStoreAsync optimisticDataStoreAsync)
-		{
-			this.optimisticDataStoreAsync = optimisticDataStoreAsync;
-		}
 
         public int BatchSize
         {
@@ -66,13 +59,13 @@ namespace SnowMaker
                 () => new ScopeState());
         }
 
-	    async void UpdateFromSyncStore(string scopeName, ScopeState state)
+	    void UpdateFromSyncStore(string scopeName, ScopeState state)
         {
             var writesAttempted = 0;
 
             while (writesAttempted < maxWriteAttempts)
             {
-                var data = await GetData(scopeName);
+                var data = GetData(scopeName);
 
                 long nextId;
                 if (!long.TryParse(data, out nextId))
@@ -85,7 +78,7 @@ namespace SnowMaker
                 state.HighestIdAvailableInBatch = nextId - 1 + batchSize;
                 var firstIdInNextBatch = state.HighestIdAvailableInBatch + 1;
 
-                if (await TryOptimisticWrite(scopeName, firstIdInNextBatch.ToString(CultureInfo.InvariantCulture)))
+                if (TryOptimisticWrite(scopeName, firstIdInNextBatch.ToString(CultureInfo.InvariantCulture)))
                     return;
 
                 writesAttempted++;
@@ -96,20 +89,14 @@ namespace SnowMaker
                 writesAttempted));
         }
 
-	    async Task<string> GetData(string scopeName)
+	    string GetData(string scopeName)
 	    {
-		    if (null != optimisticDataStore)
-			    return optimisticDataStore.GetData(scopeName);
-
-		    return await optimisticDataStoreAsync.GetDataAsync(scopeName);
+			return optimisticDataStore.GetData(scopeName);
 	    }
 
-	    async Task<bool> TryOptimisticWrite(string scopeName, string data)
+	    bool TryOptimisticWrite(string scopeName, string data)
 	    {
-		    if (null != optimisticDataStore)
-			    return optimisticDataStore.TryOptimisticWrite(scopeName, data);
-
-		    return await optimisticDataStoreAsync.TryOptimisticWriteAsync(scopeName, data);
+			return optimisticDataStore.TryOptimisticWrite(scopeName, data);
 	    }
     }
 }

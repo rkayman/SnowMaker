@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SnowMaker
 {
@@ -45,7 +46,7 @@ namespace SnowMaker
 			lock (state.IdGenerationLock)
 			{
 				if (state.LastId == state.HighestIdAvailableInBatch)
-					UpdateFromSyncStore(scopeName, state);
+					UpdateFromSyncStore(scopeName, state).Wait();
 
 				return Interlocked.Increment(ref state.LastId);
 			}
@@ -59,7 +60,7 @@ namespace SnowMaker
 				() => new ScopeState());
 		}
 
-		async void UpdateFromSyncStore(string scopeName, ScopeState state)
+		async Task UpdateFromSyncStore(string scopeName, ScopeState state)
 		{
 			var writesAttempted = 0;
 

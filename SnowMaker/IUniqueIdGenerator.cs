@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace SnowMaker
 {
     public interface IUniqueIdGenerator

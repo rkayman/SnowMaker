@@ -19,7 +19,7 @@ namespace IntegrationTests.cs
             using (var testScope = BuildTestScope())
             {
                 var store = BuildStore(testScope);
-                var generator = new UniqueIdGenerator(store) { BatchSize = 3 };
+				var generator = new UniqueIdGeneratorAsync(store) { BatchSize = 3 };
 
                 // Act
                 var generatedId = generator.NextId(testScope.IdScopeName);
@@ -36,7 +36,7 @@ namespace IntegrationTests.cs
             using (var testScope = BuildTestScope())
             {
                 var store = BuildStore(testScope);
-                var generator = new UniqueIdGenerator(store) { BatchSize = 3 };
+				var generator = new UniqueIdGeneratorAsync(store) { BatchSize = 3 };
 
                 // Act
                 generator.NextId(testScope.IdScopeName); //1
@@ -53,7 +53,7 @@ namespace IntegrationTests.cs
             using (var testScope = BuildTestScope())
             {
                 var store = BuildStore(testScope);
-                var generator = new UniqueIdGenerator(store) { BatchSize = 3 };
+				var generator = new UniqueIdGeneratorAsync(store) { BatchSize = 3 };
 
                 // Act
                 generator.NextId(testScope.IdScopeName); //1
@@ -72,7 +72,7 @@ namespace IntegrationTests.cs
             using (var testScope = BuildTestScope())
             {
                 var store = BuildStore(testScope);
-                var generator = new UniqueIdGenerator(store) { BatchSize = 3 };
+                var generator = new UniqueIdGeneratorAsync(store) { BatchSize = 3 };
 
                 // Act
                 generator.NextId(testScope.IdScopeName); //1
@@ -92,9 +92,9 @@ namespace IntegrationTests.cs
             using (var testScope = BuildTestScope())
             {
                 var store1 = BuildStore(testScope);
-                var generator1 = new UniqueIdGenerator(store1) { BatchSize = 3 };
+                var generator1 = new UniqueIdGeneratorAsync(store1) { BatchSize = 3 };
                 var store2 = BuildStore(testScope);
-                var generator2 = new UniqueIdGenerator(store2) { BatchSize = 3 };
+                var generator2 = new UniqueIdGeneratorAsync(store2) { BatchSize = 3 };
 
                 // Act
                 generator1.NextId(testScope.IdScopeName); //1
@@ -115,9 +115,9 @@ namespace IntegrationTests.cs
             using (var testScope = BuildTestScope())
             {
                 var store1 = BuildStore(testScope);
-                var generator1 = new UniqueIdGenerator(store1) { BatchSize = 3 };
+                var generator1 = new UniqueIdGeneratorAsync(store1) { BatchSize = 3 };
                 var store2 = BuildStore(testScope);
-                var generator2 = new UniqueIdGenerator(store2) { BatchSize = 3 };
+                var generator2 = new UniqueIdGeneratorAsync(store2) { BatchSize = 3 };
 
                 // Act
                 var generatedIds = new[]
@@ -148,7 +148,7 @@ namespace IntegrationTests.cs
             using (var testScope = BuildTestScope())
             {
                 var store = BuildStore(testScope);
-                var generator = new UniqueIdGenerator(store) { BatchSize = 1000 };
+                var generator = new UniqueIdGeneratorAsync(store) { BatchSize = 1000 };
                 const int testLength = 10000;
 
                 // Act

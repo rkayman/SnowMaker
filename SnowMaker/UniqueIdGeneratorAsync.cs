@@ -13,7 +13,7 @@ namespace SnowMaker
         readonly IDictionary<string, ScopeState> states = new Dictionary<string, ScopeState>();
         readonly object statesLock = new object();
 
-        int batchSize = 100;
+        int batchSize = 128;
         int maxWriteAttempts = 25;
 
         public UniqueIdGeneratorAsync(IOptimisticDataStoreAsync optimisticDataStore)
